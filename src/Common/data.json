@@ -1,0 +1,70 @@
+[
+  {
+    "label": "VP Accounting",
+    "tagClassName": "special",
+    "children": [
+      {
+        "label": "iWay",
+        "children": [
+          {
+            "label": "Universidad de Especialidades del Espíritu Santo"
+          },
+          {
+            "label": "Marmara University"
+          },
+          {
+            "label": "Baghdad College of Pharmacy"
+          }
+        ]
+      },
+      {
+        "label": "KDB",
+        "children": [
+          {
+            "label": "Latvian University of Agriculture"
+          },
+          {
+            "label": "Dublin Institute of Technology"
+          }
+        ]
+      },
+      {
+        "label": "Justice",
+        "children": [
+          {
+            "label": "Baylor University"
+          },
+          {
+            "label": "Massachusetts College of Art"
+          },
+          {
+            "label": "Universidad Técnica Latinoamericana"
+          },
+          {
+            "label": "Saint Louis College"
+          },
+          {
+            "label": "Scott Christian University"
+          }
+        ]
+      },
+      {
+        "label": "XML Programming",
+        "children": [
+          {
+            "label": "Victoria University"
+          },
+          {
+            "label": "Andrews University"
+          },
+          {
+            "label": "Centre Universitaire d'Oum El Bouaghi"
+          },
+          {
+            "label": "Dilla University"
+          }
+        ]
+      }
+    ]
+  }
+]

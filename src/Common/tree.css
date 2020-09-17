@@ -1,0 +1,30 @@
+.bootstrap-demo .dropdown-trigger {
+  border-radius: 0.25rem;
+}
+
+.bootstrap-demo .dropdown-trigger > span:after {
+  font-size: 10px;
+  color: #555;
+}
+
+.bootstrap-demo .toggle {
+  font: normal normal normal 12px/1 FontAwesome;
+  color: #555;
+}
+
+.bootstrap-demo .toggle.collapsed::after {
+  content: "\f067";
+}
+
+.bootstrap-demo .toggle.expanded::after {
+  content: "\f068";
+}
+
+.bootstrap-demo .root {
+  padding: 50px;
+  margin: 0px;
+}
+
+.node .fa-ban {
+  color: #ccc;
+}
