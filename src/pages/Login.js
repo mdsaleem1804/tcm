@@ -44,12 +44,12 @@ export default class Login extends Component {
     this.setState({ isLoading: true });
     const email = this.state.email;
     const password = this.state.password;
-    const SITE_CODE = window.app && window.app.env.SITE_CODE;
+    const CLIENT_CODE = window.app && window.app.env.CLIENT_CODE;
     axios
       .post(Helper.getUrl() + "login", {
         userID: email,
         password: password,
-        companyCode: SITE_CODE,
+        companyCode: CLIENT_CODE,
       })
       .then((result) => {
         console.log(result);

@@ -294,7 +294,21 @@ export default class PrescriptionEntry extends Component {
       });
     }
 
+    const TotalOtherthanDrugValue = this.state.rowsForOthers.reduce(
+      (sum, currentValue) => {
+        return sum + eval(currentValue.unittotal);
+      },
+      0
+    );
+
+    console.log("TotalOtherthanDrugValue" + TotalOtherthanDrugValue);
+    console.log("TotalDrugValue" + this.state.total_amount);
+    console.log(
+      "TotalValue" + eval(TotalOtherthanDrugValue + this.state.total_amount)
+    );
+
     this.setState({ isLoading: true });
+
     axios
       .post(Helper.getUrl() + "tcmPrescription", {
         prescriptionNo: "",
@@ -304,7 +318,7 @@ export default class PrescriptionEntry extends Component {
         custName: localStorage.getItem("custName"),
         staffCode: localStorage.getItem("staffCode"),
         staffName: localStorage.getItem("fullName"),
-        totalAmount: this.state.total_amount,
+        totalAmount: eval(TotalOtherthanDrugValue + this.state.total_amount),
         totalQty: this.state.total_qty,
         totalDays: this.state.total_days,
         siteCode: localStorage.getItem("siteCode"),
@@ -1241,28 +1255,33 @@ export default class PrescriptionEntry extends Component {
               </div>
 
               <div className="col-md-3">
-                <label htmlFor="inputName">
-                  {Helper.changeLabelFormat(this.state.LabelData.label44)}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  onChange={onSearchChangeHandler}
-                />
-                <DeniReactTreeView
-                  style={{
-                    marginRight: "10px",
-                    marginBottom: "10px",
-                    fontSize: "18px",
-                    width: "400px",
-                    height: "500px",
-                    fontWeight: "bold",
-                  }}
-                  showRoot={true}
-                  items={this.state.treeData}
-                  onSelectItem={onSelectItemHandler}
-                  autoLoad={true}
-                />
+                <div className="form-row">
+                  <div className="col-md-2">
+                    <label htmlFor="inputName">
+                      {Helper.changeLabelFormat(this.state.LabelData.label44)}
+                    </label>
+                  </div>
+                  <div className="col-md-10">
+                    <input
+                      type="text"
+                      className="form-control"
+                      onChange={onSearchChangeHandler}
+                    />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="col-md-12">
+                    <DeniReactTreeView
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "bold",
+                      }}
+                      items={this.state.treeData}
+                      onSelectItem={onSelectItemHandler}
+                      autoLoad={true}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </form>

@@ -7,6 +7,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+table {
+  font-family: Arial, Helvetica, sans-serif;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -15,12 +18,12 @@ code {
 .navbar {
   float: none;
   display: inline-block;
-  background-color: green;
+  background-color: lightgray;
 }
 
 .navbar-brand {
   color: white;
-  padding-right: 20px;
+  padding-right: 10px;
 }
 .navbar-brand:hover {
   color: white;

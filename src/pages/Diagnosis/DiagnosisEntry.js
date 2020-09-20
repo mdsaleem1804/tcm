@@ -1,11 +1,22 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import DeniReactTreeView from "deni-react-treeview";
+import { MDBBtn, MDBIcon } from "mdbreact";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "mdbreact/dist/css/mdb.css";
 import axios from "axios";
 import Helper from "../../Common/Helper";
 import Header from "../Header";
 import Footer from "../Footer";
 import dateFormat from "dateformat";
 import Spinner from "../../Common/Spinner";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
+import Nav from "react-bootstrap/Nav";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+
 export default class DiagnosisEntry extends Component {
   state = {
     treeData: [],
@@ -36,6 +47,9 @@ export default class DiagnosisEntry extends Component {
     isLoading: true,
     diagnosisHistory: [],
     errorMessage: "",
+    paymentSummaryModelShow: false,
+    prescriptiontotalDays: [],
+    PrescriptionHistory: [],
   };
   componentDidMount() {
     this.GetCustomerData();
@@ -104,6 +118,10 @@ export default class DiagnosisEntry extends Component {
         console.log(error);
       });
   }
+  handlePaymentSummaryClose = () => {
+    this.setState({ paymentSummaryModelShow: false });
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     console.log(this.state.value);
@@ -139,7 +157,7 @@ export default class DiagnosisEntry extends Component {
     this.GetChineseEnglishName("EnglishName", "", "");
   }
 
-  handleSubmit = (event) => {
+  handleSave = (event) => {
     //console.log("code " + localStorage.getItem("custCode"));
     event.preventDefault();
     this.setState({ isLoading: true });
@@ -194,6 +212,31 @@ export default class DiagnosisEntry extends Component {
         //this.setState({ authError : true, isLoading: false });
       });
   };
+
+  GetPrescriptionHistory(xPrescriptionNo) {
+    axios
+      .get(
+        Helper.getUrl() + "tcmPrescription?PrescriptionNo=" + xPrescriptionNo
+      )
+      .then((result) => {
+        if (result.data.success) {
+          const data = result.data.result[0].Items;
+          this.setState(
+            {
+              PrescriptionHistory: data,
+              prescriptiontotalDays: result.data.result[0].totalDays,
+            },
+            () => {
+              this.setState({ paymentSummaryModelShow: true });
+              // this.IteratePrescriptionAndAssignValues();
+            }
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   GetDiseaseData(xCategory, xItemName) {
     axios
@@ -371,16 +414,12 @@ export default class DiagnosisEntry extends Component {
     return (
       <div>
         <Header />
+
         <br />
         <div className="form-row">
           <div className="col-md-3">
-            <div style={{ width: "100%", fontWeight: "bold" }}>
-              <table
-                style={{
-                  fontSize: "14px",
-                }}
-                className="table table-bordered"
-              >
+            <div style={{ width: "100%" }}>
+              <table className="table table-bordered">
                 <thead>
                   <tr>
                     <td>{this.state.LabelData.label54}</td>
@@ -415,17 +454,13 @@ export default class DiagnosisEntry extends Component {
               <div
                 style={{ width: "100%", height: "250px", overflow: "scroll" }}
               >
-                <table
-                  style={{
-                    fontSize: "14px",
-                  }}
-                  className="table table-bordered"
-                >
+                <table className="table table-bordered">
                   <thead>
                     <tr>
                       <th>{this.state.LabelData.label54}</th>
                       <th>{this.state.LabelData.label39}</th>
                       <th>{this.state.LabelData.label40}</th>
+                      <th>{this.state.LabelData.label99}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -433,19 +468,36 @@ export default class DiagnosisEntry extends Component {
                       <tr key={customer.Id}>
                         <td>
                           {dateFormat(customer.diagnoseDate, "dd/mm/yyyy")}
-                          <button
-                            className="btn btn-warning btn-block "
-                            type="submit"
+                        </td>
+
+                        <td>
+                          <img
+                            style={{ paddingRight: "30px" }}
+                            src={require("../../assets/down-arrow.png")}
+                            width="100"
+                            height="40"
                             onClick={this.GetDiagnoseSingleData.bind(
                               this,
                               customer.diagnoseNo
                             )}
-                          >
-                            LOAD
-                          </button>
+                          />
+
+                          {customer.diagnoseSummary}
                         </td>
-                        <td>{customer.diagnoseSummary}</td>
                         <td>{customer.prescription}</td>
+                        <td>
+                          <img
+                            style={{ paddingRight: "30px" }}
+                            src={require("../../assets/eye.png")}
+                            width="80"
+                            height="40"
+                            onClick={this.GetPrescriptionHistory.bind(
+                              this,
+                              customer.prescription
+                            )}
+                          />
+                          {customer.totalAmount}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -456,332 +508,497 @@ export default class DiagnosisEntry extends Component {
         </div>
 
         <br />
-
-        <div style={{ border: "ridge", padding: "10px" }}>
-          <form onSubmit={this.handleSubmit}>
-            <div className="form-row">
-              <div className="col-md-8">
-                <div className="form-row">
-                  <div className="col-md-12">
-                    <label className="form-label-group">
-                      {Helper.changeLabelFormat(this.state.LabelData.label63)}
-                    </label>
-                    <textarea
-                      rows="5"
-                      className="form-control search_border"
-                      value={this.state.txtMainAction}
-                      onClick={this.handleMainAction.bind(this)}
-                      onFocus={this.handleMainAction.bind(this)}
-                      onChange={(e) =>
-                        this.setState({
-                          txtMainAction: e.target.value,
-                        })
-                      }
-                      style={{ borderColor: "red" }}
-                      placeholder="Search"
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label77)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtCurrentSituation}
-                        onChange={(e) =>
-                          this.setState({
-                            txtCurrentSituation: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label78)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtConsultation}
-                        onChange={(e) =>
-                          this.setState({ txtConsultation: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label61)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtBloodPressure}
-                        onChange={(e) =>
-                          this.setState({ txtBloodPressure: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label58)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtBodyTemp}
-                        onChange={(e) =>
-                          this.setState({ txtBodyTemp: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-1">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label1)}
-                      </label>
-                      <input
-                        type="text"
-                        value={this.state.txtHeight}
-                        className="form-control"
-                        onChange={(e) =>
-                          this.setState({ txtHeight: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-1">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label55)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtWeight}
-                        onChange={(e) =>
-                          this.setState({ txtWeight: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label2)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtVitality}
-                        onChange={(e) =>
-                          this.setState({ txtVitality: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label81)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.txtTreatment}
-                        onChange={(e) =>
-                          this.setState({ txtTreatment: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label79)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtLeftPulse}
-                        onClick={this.handleLeftPulse.bind(this)}
-                        onFocus={this.handleLeftPulse.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtLeftPulse: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label80)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtRightPulse}
-                        onClick={this.handleRightPulse.bind(this)}
-                        onFocus={this.handleRightPulse.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtRightPulse: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label75)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtPathogenesis}
-                        onClick={this.handlePathogenesis.bind(this)}
-                        onFocus={this.handlePathogenesis.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtPathogenesis: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-2">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label76)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtAllergic}
-                        onClick={this.handleAllergic.bind(this)}
-                        onFocus={this.handleAllergic.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtAllergic: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label3)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtChineseMedicine}
-                        onClick={this.handleChineseMedicine.bind(this)}
-                        onFocus={this.handleChineseMedicine.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtChineseMedicine: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-4">
-                    <div className="form-label-group">
-                      <label htmlFor="inputName">
-                        {Helper.changeLabelFormat(this.state.LabelData.label4)}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        style={{ borderColor: "red" }}
-                        placeholder="Search"
-                        value={this.state.txtEnglishMedicine}
-                        onClick={this.handleEnglishMedicine.bind(this)}
-                        onFocus={this.handleEnglishMedicine.bind(this)}
-                        onChange={(e) =>
-                          this.setState({
-                            txtEnglishMedicine: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-md-6"></div>
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="col-md-12">
-                  <label htmlFor="inputName">
-                    {Helper.changeLabelFormat(this.state.LabelData.label44)}
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    onChange={onSearchChangeHandler}
-                  />
-                  <DeniReactTreeView
+        <div className="form-row">
+          <div className="col-md-9">
+            <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+              <Row>
+                <Col sm={3}>
+                  <Nav variant="pills" className="flex-column">
+                    <Nav.Item>
+                      <Nav.Link eventKey="first">Main Action</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link eventKey="second">General checkup</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link eventKey="third">Treatment</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link eventKey="fourth">Slimmimng Treatment</Nav.Link>
+                    </Nav.Item>
+                  </Nav>
+                </Col>
+                <Col sm={9}>
+                  <Tab.Content
                     style={{
-                      marginRight: "10px",
-                      marginBottom: "10px",
-                      fontSize: "18px",
-                      width: "400px",
-                      height: "400px",
-                      fontWeight: "bold",
+                      border: "2px solid #73AD21",
+                      borderRadius: "25px",
+                      padding: "20px",
                     }}
-                    items={this.state.treeData}
-                    onSelectItem={onSelectItemHandler}
-                    autoLoad={true}
-                  />
+                  >
+                    <Tab.Pane eventKey="first">
+                      <div className="form-row">
+                        <div className="col-md-12">
+                          <label className="form-label-group">
+                            {Helper.changeLabelFormat(
+                              this.state.LabelData.label63
+                            )}
+                          </label>
+                          <textarea
+                            rows="5"
+                            className="form-control search_border"
+                            value={this.state.txtMainAction}
+                            onClick={this.handleMainAction.bind(this)}
+                            onFocus={this.handleMainAction.bind(this)}
+                            onChange={(e) =>
+                              this.setState({
+                                txtMainAction: e.target.value,
+                              })
+                            }
+                            style={{ borderColor: "red" }}
+                            placeholder="Search"
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label77
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtCurrentSituation}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtCurrentSituation: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label78
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtConsultation}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtConsultation: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col-md-6"></div>
+                      </div>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="second">
+                      <div className="form-row">
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label61
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtBloodPressure}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtBloodPressure: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label58
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtBodyTemp}
+                              onChange={(e) =>
+                                this.setState({ txtBodyTemp: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label1
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              value={this.state.txtHeight}
+                              className="form-control"
+                              onChange={(e) =>
+                                this.setState({ txtHeight: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label55
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtWeight}
+                              onChange={(e) =>
+                                this.setState({ txtWeight: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label2
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtVitality}
+                              onChange={(e) =>
+                                this.setState({ txtVitality: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label81
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtTreatment}
+                              onChange={(e) =>
+                                this.setState({ txtTreatment: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="third">
+                      <div className="form-row">
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label79
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtLeftPulse}
+                              onClick={this.handleLeftPulse.bind(this)}
+                              onFocus={this.handleLeftPulse.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtLeftPulse: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label80
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtRightPulse}
+                              onClick={this.handleRightPulse.bind(this)}
+                              onFocus={this.handleRightPulse.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtRightPulse: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label75
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtPathogenesis}
+                              onClick={this.handlePathogenesis.bind(this)}
+                              onFocus={this.handlePathogenesis.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtPathogenesis: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label76
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtAllergic}
+                              onClick={this.handleAllergic.bind(this)}
+                              onFocus={this.handleAllergic.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtAllergic: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label3
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtChineseMedicine}
+                              onClick={this.handleChineseMedicine.bind(this)}
+                              onFocus={this.handleChineseMedicine.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtChineseMedicine: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col-md-6">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label4
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{ borderColor: "red" }}
+                              placeholder="Search"
+                              value={this.state.txtEnglishMedicine}
+                              onClick={this.handleEnglishMedicine.bind(this)}
+                              onFocus={this.handleEnglishMedicine.bind(this)}
+                              onChange={(e) =>
+                                this.setState({
+                                  txtEnglishMedicine: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="fourth">
+                      Slimming Treatment Entries will come here
+                    </Tab.Pane>
+                  </Tab.Content>
+                </Col>
+              </Row>
+            </Tab.Container>
+            <hr />
+            <form onSubmit={this.handleSubmit}>
+              <div className="form-row">
+                <div className="col-md-8"></div>
+                <div className="col-md-2">
+                  <MDBBtn
+                    color="success btn-block"
+                    onClick={this.handleSave.bind()}
+                  >
+                    <MDBIcon size="lg" icon="save" className="mr-2" />
+                    {Helper.changeLabelFormat(this.state.LabelData.label21)}
+                  </MDBBtn>
+                </div>
+                <div className="col-md-2 ">
+                  <MDBBtn
+                    floating
+                    gradient="peach"
+                    color="danger btn-block"
+                    onClick={(e) => this.DataClear()}
+                  >
+                    <MDBIcon size="lg" icon="backspace" className="mr-2" />
+                    {Helper.changeLabelFormat(this.state.LabelData.label45)}
+                  </MDBBtn>
                 </div>
               </div>
-            </div>
-            <hr />
+            </form>
+          </div>
+          <div className="col-md-3">
             <div className="form-row">
-              <div className="col-md-10"></div>
-              <div className="col-md-1">
-                <button className="btn btn-success btn-block">
-                  <i className="fas fa-save"></i>
-                  {Helper.changeLabelFormat(this.state.LabelData.label21)}
-                </button>
+              <div className="col-md-2">
+                <label htmlFor="inputName">
+                  {Helper.changeLabelFormat(this.state.LabelData.label44)}
+                </label>
               </div>
-              <div className="col-md-1">
-                <button
-                  className="btn btn-danger btn-block"
-                  onClick={(e) => this.DataClear()}
-                >
-                  {Helper.changeLabelFormat(this.state.LabelData.label45)}
-                </button>
+              <div className="col-md-10">
+                <input
+                  type="text"
+                  className="form-control"
+                  onChange={onSearchChangeHandler}
+                />
               </div>
             </div>
-          </form>
+            <div className="form-row">
+              <div className="col-md-12">
+                <DeniReactTreeView
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                  }}
+                  items={this.state.treeData}
+                  onSelectItem={onSelectItemHandler}
+                  autoLoad={true}
+                />
+              </div>
+            </div>
+          </div>
         </div>
+        <Modal
+          show={this.state.paymentSummaryModelShow}
+          onHide={this.handlePaymentSummaryClose}
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Payment Summary</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="col-md-12">
+              <table
+                style={{
+                  fontSize: "14px",
+                }}
+                className="table table-bordered"
+              >
+                <thead>
+                  <tr>
+                    <th>
+                      {Helper.changeLabelFormat(this.state.LabelData.label15)}
+                    </th>
+                    <th>
+                      {Helper.changeLabelFormat(this.state.LabelData.label18)}
+                    </th>
+                    <th>
+                      {Helper.changeLabelFormat(this.state.LabelData.label8)}
+                    </th>
+                    <th>
+                      {Helper.changeLabelFormat(this.state.LabelData.label11)}
+                    </th>
+                    <th>
+                      {Helper.changeLabelFormat(this.state.LabelData.label5)}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.PrescriptionHistory.map((prescription, index) => (
+                    <tr key={prescription.lineNo}>
+                      <td>{prescription.itemDesc}</td>
+                      <td align="right">{prescription.unitPrice}</td>
+
+                      <td align="right">
+                        {prescription.itemType === "DRUGS"
+                          ? (
+                              prescription.itemQty *
+                              prescription.daysToTakeMedicine *
+                              this.state.prescriptiontotalDays
+                            ).toFixed(2)
+                          : (
+                              prescription.itemQty *
+                              prescription.daysToTakeMedicine
+                            ).toFixed(2)}
+                      </td>
+
+                      <td align="right">
+                        {prescription.itemType === "DRUGS"
+                          ? (
+                              this.state.prescriptiontotalDays *
+                              prescription.amount
+                            ).toFixed(2)
+                          : prescription.amount.toFixed(2)}
+                      </td>
+                      <td>{prescription.itemType}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={this.handlePaymentSummaryClose}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         <Footer />
       </div>
