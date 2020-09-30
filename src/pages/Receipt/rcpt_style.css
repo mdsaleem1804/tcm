@@ -1,0 +1,14 @@
+div > center > table > thead > tr > :nth-child(1) {
+  font-weight: bold;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 130%;
+}
+div > center > table > thead > tr > :nth-child(2) {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 130%;
+}
+@media print {
+  footer {
+    page-break-after: always;
+  }
+}

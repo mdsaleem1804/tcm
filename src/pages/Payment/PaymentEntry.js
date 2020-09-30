@@ -160,6 +160,7 @@ export default class PrescriptionEntry extends Component {
     }
     event.preventDefault();
     this.setState({ isLoading: true });
+    localStorage.setItem("consultationFee", this.state.consultationFees);
     axios
       .post(Helper.getUrl() + "tcmPostSalesHold", {
         prescriptionCode: localStorage.getItem("prescriptionNo"),

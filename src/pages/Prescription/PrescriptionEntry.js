@@ -301,14 +301,14 @@ export default class PrescriptionEntry extends Component {
       0
     );
 
-    console.log("TotalOtherthanDrugValue" + TotalOtherthanDrugValue);
+    /*console.log("TotalOtherthanDrugValue" + TotalOtherthanDrugValue);
     console.log("TotalDrugValue" + this.state.total_amount);
     console.log(
       "TotalValue" + eval(TotalOtherthanDrugValue + this.state.total_amount)
-    );
+    );*/
 
     this.setState({ isLoading: true });
-
+    // console.log("Items :" + JSON.stringify(Items));
     axios
       .post(Helper.getUrl() + "tcmPrescription", {
         prescriptionNo: "",
@@ -328,7 +328,8 @@ export default class PrescriptionEntry extends Component {
       .then((result) => {
         if (result.data.success == "1") {
           const prescriptionNo = result.data.result;
-          alert("Prescription Created Successfully " + prescriptionNo);
+          alert("patient prescription is saved " + prescriptionNo);
+          //localStorage.setItem("rcptItems", Items);
           localStorage.setItem("prescriptionNo", prescriptionNo);
           localStorage.setItem("drugsAmount", this.state.total_amount);
           this.DataClear();
@@ -476,6 +477,12 @@ export default class PrescriptionEntry extends Component {
         console.log(error);
       });
   }
+  GoToReceipt(xPrescriptionNo) {
+    localStorage.setItem("rcptPrescriptionNo", xPrescriptionNo);
+    this.props.history.push({
+      pathname: "/ReceiptPreview",
+    });
+  }
   GetCustomerPrescriptionSingleData(xPrescriptionNo) {
     // this.setState({ isPrescriptionSingleDataLoading: true });
     axios
@@ -610,6 +617,7 @@ export default class PrescriptionEntry extends Component {
                     <table
                       style={{
                         fontSize: "14px",
+                        fontWeight: "bold",
                       }}
                       className="table  table-hover table-bordered"
                     >
@@ -624,13 +632,7 @@ export default class PrescriptionEntry extends Component {
                       <tbody>
                         {this.state.prescriptionHistory.map(
                           (customer, index) => (
-                            <tr
-                              key={customer.prescriptionNo}
-                              onClick={this.GetCustomerPrescriptionSingleData.bind(
-                                this,
-                                customer.prescriptionNo
-                              )}
-                            >
+                            <tr key={customer.prescriptionNo}>
                               <td>{customer.prescriptionNo}</td>
                               <td>
                                 {dateFormat(
@@ -640,6 +642,38 @@ export default class PrescriptionEntry extends Component {
                               </td>
                               <td align="right">{customer.totalAmount}</td>
                               <td align="right">{customer.totalDays}</td>
+                              <td width="80">
+                                <img
+                                  style={{ paddingRight: "30px" }}
+                                  src={require("../../assets/down-arrow.png")}
+                                  width="100"
+                                  height="40"
+                                  onClick={this.GetCustomerPrescriptionSingleData.bind(
+                                    this,
+                                    customer.prescriptionNo
+                                  )}
+                                />
+                              </td>
+                              <td width="80">
+                                <img
+                                  style={{ paddingRight: "30px" }}
+                                  src={require("../../assets/receipt.png")}
+                                  width="80"
+                                  height="40"
+                                  onClick={this.GoToReceipt.bind(
+                                    this,
+                                    customer.prescriptionNo
+                                  )}
+                                />
+                              </td>
+                              <td width="80">
+                                <img
+                                  style={{ paddingRight: "30px" }}
+                                  src={require("../../assets/delete.png")}
+                                  width="80"
+                                  height="40"
+                                />
+                              </td>
                             </tr>
                           )
                         )}
@@ -842,6 +876,7 @@ export default class PrescriptionEntry extends Component {
                         <select
                           className="form-control"
                           name="group"
+                          value={this.state.group}
                           onChange={(e) =>
                             this.setState({
                               group: e.target.value,

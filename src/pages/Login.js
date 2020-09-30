@@ -52,7 +52,6 @@ export default class Login extends Component {
         companyCode: CLIENT_CODE,
       })
       .then((result) => {
-        console.log(result);
         if (result.data.success === "1") {
           localStorage.setItem("siteCode", result.data.result.siteCode);
           localStorage.setItem("fullName", result.data.result.fullName);

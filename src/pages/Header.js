@@ -86,6 +86,7 @@ export default class Header extends Component {
               {Helper.changeLabelFormat(this.state.LabelData.label60)}
             </MDBBtn>
           </Link>
+
           <div className="navbar-collapse collapse">
             <ul className="nav navbar-nav"></ul>
             <Link

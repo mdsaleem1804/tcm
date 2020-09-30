@@ -37,7 +37,14 @@ export default class DiagnosisEntry extends Component {
     txtAllergic: "",
     txtChineseMedicine: "",
     txtEnglishMedicine: "",
-
+    txtArmLeft: 0,
+    txtArmRight: 0,
+    txtWaistLeft: 0,
+    txtWaistRight: 0,
+    txtHipLeft: 0,
+    txtHipRight: 0,
+    txtThighLeft: 0,
+    txtThighRight: 0,
     diagnoseDate: Helper.getCurrentDate(),
     custCode: "",
     custName: "",
@@ -99,8 +106,7 @@ export default class DiagnosisEntry extends Component {
   }
   GetCustomerHistory() {
     const custCode = localStorage.getItem("custCode");
-    console.log("custCode" + custCode);
-    //console.log("custname" + localStorage.getItem("custName"));
+
     axios
       .post(Helper.getUrl() + "tcmDiagnoseHistory", {
         custCode: custCode,
@@ -181,21 +187,35 @@ export default class DiagnosisEntry extends Component {
         diagAllergic: this.state.txtAllergic,
         diagTreatment: this.state.txtTreatment,
         createdBy: localStorage.getItem("fullName"),
-        appointmentCode: this.props.location.appointmentID,
+        appointmentCode: localStorage.getItem("appointmentID"),
         freeTextEntry: this.state.txtMainAction,
         height: this.state.txtHeight,
         weight: this.state.txtWeight,
         vitality: this.state.txtVitality,
         chineseMedicine: this.state.txtChineseMedicine,
         englishMedicine: this.state.txtEnglishMedicine,
+        armLeft: this.state.txtArmLeft,
+        armRight: this.state.txtArmRight,
+        waistLeft: this.state.txtWaistLeft,
+        waistRight: this.state.txtWaistRight,
+        hipLeft: this.state.txtHipLeft,
+        hipRight: this.state.txtHipRight,
+        thighLeft: this.state.txtThighLeft,
+        thighRight: this.state.txtThighRight,
       })
       .then((result) => {
         if (result.data.success == "1") {
           this.setState({ redirect: true, isLoading: true });
           this.GetCustomerHistory();
           const diagnoseNo = result.data.result;
-          alert("Diagnosis Created Successfully " + diagnoseNo);
+          console.log("diagnoseNo" + diagnoseNo);
+          //alert("Diagnosis Created Successfully " + diagnoseNo);
+          alert("Patient diagnosis is saved ");
           localStorage.setItem("diagnoseNo", diagnoseNo);
+          localStorage.setItem(
+            "rcptRegTime",
+            dateFormat(Helper.getCurrentDate(), "dd/mm/yyyy")
+          );
           this.DataClear();
           this.props.history.push({
             pathname: "/PrescriptionEntry",
@@ -313,6 +333,12 @@ export default class DiagnosisEntry extends Component {
           txtAllergic: data.result[0].diagAllergic,
           txtChineseMedicine: data.result[0].chineseMedicine,
           txtEnglishMedicine: data.result[0].englishMedicine,
+          txtArmLeft: data.result[0].armLeft,
+          txtArmRight: data.result[0].armRight,
+          txtWaistLeft: data.result[0].waistLeft,
+          txtHipLeft: data.result[0].hipLeft,
+          txtThighLeft: data.result[0].thighLeft,
+          txtThighRight: data.result[0].thighRight,
         })
       );
   }
@@ -855,7 +881,92 @@ export default class DiagnosisEntry extends Component {
                       </div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="fourth">
-                      Slimming Treatment Entries will come here
+                      <div className="form-row">
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Arm Right</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtArmRight}
+                              onChange={(e) =>
+                                this.setState({ txtArmRight: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Arm Left</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtArmLeft}
+                              onChange={(e) =>
+                                this.setState({ txtArmLeft: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Waist</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtWaistLeft}
+                              onChange={(e) =>
+                                this.setState({ txtWaistLeft: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Hip</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtHipLeft}
+                              onChange={(e) =>
+                                this.setState({ txtHipLeft: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Thigh Right</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtThighRight}
+                              onChange={(e) =>
+                                this.setState({ txtThighRight: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-3">
+                          <div className="form-label-group">
+                            <label htmlFor="inputName">Thigh Left</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={this.state.txtThighLeft}
+                              onChange={(e) =>
+                                this.setState({ txtThighLeft: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </Tab.Pane>
                   </Tab.Content>
                 </Col>

@@ -28,6 +28,7 @@ export default class MCPreview extends Component {
     staffSign: null,
     isLoading: false,
     staffSignString: "",
+    LabelData: [],
   };
 
   constructor(props) {
@@ -38,6 +39,7 @@ export default class MCPreview extends Component {
   componentDidMount() {
     this.SearchCustomer();
     this.GetInvoiceDetails();
+    this.GetLabels();
   }
   SearchCustomer() {
     const xMCNo = this.props.location.search.replace("?MCNo=", "");
@@ -72,11 +74,25 @@ export default class MCPreview extends Component {
         //this.setState({ authError: true, isLoading: false });
       });
   }
-  GetInvoiceDetails() {
-    const test = localStorage.getItem("siteCode");
-    console.log(test);
+  GetLabels() {
     axios
-      .get(Helper.getUrl() + "getInvoiceTitle?siteCode=JUR")
+      .get(Helper.getUrl() + "tcmLabelsWithId")
+      .then((result) => {
+        if (result.data.success) {
+          const data = result.data.result[0];
+          this.setState({
+            LabelData: data,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  GetInvoiceDetails() {
+    const siteCode = localStorage.getItem("siteCode");
+    axios
+      .get(Helper.getUrl() + "getInvoiceTitle?siteCode=" + siteCode)
       .then((result) => {
         if (result.data.success) {
           const siteDetails = result.data.result;
@@ -130,14 +146,15 @@ export default class MCPreview extends Component {
               <div className="col-md-6">
                 <div className="form-label-group">
                   <label htmlFor="inputName">
-                    医疗证书 Medical Certificate
+                    {this.state.LabelData.label158}
                   </label>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-label-group">
                   <label>
-                    序列号 Serial No {" " + this.state.medicalCertificateNo}
+                    {this.state.LabelData.label161}
+                    {" " + this.state.medicalCertificateNo}
                   </label>
                   <br />
                   <label>
@@ -162,7 +179,8 @@ export default class MCPreview extends Component {
               <div className="col-md-6">
                 <div className="form-label-group">
                   <label htmlFor="inputName">
-                    号 IC NO {localStorage.getItem("MCnric")}
+                    {this.state.LabelData.label49}{" "}
+                    {localStorage.getItem("MCnric")}
                   </label>
                 </div>
               </div>

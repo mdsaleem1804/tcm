@@ -12,6 +12,7 @@ import PrescriptionEntry from "./pages/Prescription/PrescriptionEntry";
 import MCEntry from "./pages/MedicalCertificate/MCEntry";
 
 import MCPreview from "./pages/MedicalCertificate/MCPreview";
+import ReceiptPreview from "./pages/Receipt/ReceiptPreview";
 import TreeViewSearch from "./pages/Prescription/TreeViewSearch";
 import PrescriptionNew from "./pages/Prescription/PrescriptionNew";
 import PaymentEntry from "./pages/Payment/PaymentEntry";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/TreeViewSearch" component={TreeViewSearch} />
           <Route path="/PrescriptionNew" component={PrescriptionNew} />
           <Route path="/PaymentEntry" component={PaymentEntry} />
+          <Route path="/ReceiptPreview" component={ReceiptPreview} />
         </Switch>
       </Router>
     </div>
