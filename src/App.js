@@ -10,6 +10,7 @@ import ShowAppointment from "./pages/Appointments/ShowAppointment";
 import DiagnosisEntry from "./pages/Diagnosis/DiagnosisEntry";
 import PrescriptionEntry from "./pages/Prescription/PrescriptionEntry";
 import MCEntry from "./pages/MedicalCertificate/MCEntry";
+import Settings from "./Common/Settings";
 
 import MCPreview from "./pages/MedicalCertificate/MCPreview";
 import ReceiptPreview from "./pages/Receipt/ReceiptPreview";
@@ -31,7 +32,7 @@ function App() {
           <Route path="/EditCustomer" component={EditCustomer} />
           <Route path="/ShowAppointment" component={ShowAppointment} />
           <Route path="/MCEntry" component={MCEntry} />
-
+          <Route path="/Settings" component={Settings} />
           <Route path="/MCPreview" component={MCPreview} />
           <Route path="/DiagnosisEntry" component={DiagnosisEntry} />
           <Route path="/PrescriptionEntry" component={PrescriptionEntry} />

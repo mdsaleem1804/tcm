@@ -5,6 +5,7 @@ import Helper from "../../Common/Helper";
 import Spinner from "../../Common/Spinner";
 import Header from "../Header";
 import "./rcpt_style.css";
+import { NoPrint, A3, A4, A5 } from "paper-print-react";
 export default class ReceiptPreview extends Component {
   state = {
     LabelData: [],
@@ -13,6 +14,7 @@ export default class ReceiptPreview extends Component {
     prescriptionDataForReceipt: [],
     rcptDetails: localStorage.getItem("rcptItems"),
     tempItemGroup: "",
+    pageSize: "A4",
   };
 
   componentDidMount() {
@@ -134,87 +136,130 @@ export default class ReceiptPreview extends Component {
       .reduce((sum, currentValue) => {
         return sum + eval(currentValue.amount);
       }, 0);
-    const consultationFee = parseFloat(localStorage.getItem("consultationFee"));
+    const consultationFee = rcpt.consultationFee;
     const totalAmountPayable = eval(drugAmount + consultationFee).toFixed(2);
+    const printData = rcptItems.map((filteredPerson, i) => (
+      <div key={i}>
+        <center>
+          <h1> {this.state.siteHeader}</h1>
+          <h3
+            style={{
+              marginLeft: "30px",
+              marginRight: "30px",
+              whiteSpace: "pre-line",
+            }}
+          >
+            {this.state.siteAddress}
+          </h3>
+          <table width="100%" className="table table-bordered">
+            <thead>
+              <tr>
+                <td width="40%">收据 Receipt</td>
+                <td> {rcpt.prescriptionNo}</td>
+              </tr>
+              <tr>
+                <td>记账到 BillTo</td>
+                <td> {rcpt.custName}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label49}</td>
+                <td>{this.state.customerDetails.nric}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label196}</td>
+                <td> {rcpt.prescriptionDate}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label197}</td>
+                <td> {rcpt.staffName}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label198}</td>
+                <td> {rcpt.registrationNo}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label199}</td>
+                <td>{filteredPerson.daysToTakeMedicine}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label200}</td>
+                <td>{filteredPerson.timeToTakeMedicine}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label201}</td>
+                <td>{filteredPerson.waysToTakeMedicine}</td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label202}</td>
+                <td>{filteredPerson.remark}</td>
+              </tr>
 
+              <tr>
+                <td>{this.state.LabelData.label22}</td>
+                <td>{rcpt.consultationFee} </td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label25}</td>
+                <td>{drugAmount.toFixed(2)} </td>
+              </tr>
+              <tr>
+                <td>{this.state.LabelData.label205}</td>
+                <td>{totalAmountPayable} </td>
+              </tr>
+            </thead>
+          </table>
+          <footer></footer>
+        </center>
+      </div>
+    ));
     return (
       <div>
         <Header />
         <br />
-        {rcptItems.map((filteredPerson, i) => (
-          <div key={i}>
-            <center>
-              <h1> {this.state.siteHeader}</h1>
-              <h3
-                style={{
-                  marginLeft: "30px",
-                  marginRight: "30px",
-                  whiteSpace: "pre-line",
-                }}
-              >
-                {this.state.siteAddress}
-              </h3>
-              <table width="100%" className="table table-bordered">
-                <thead>
-                  <tr>
-                    <td width="40%">收据 Receipt</td>
-                    <td> {rcpt.prescriptionNo}</td>
-                  </tr>
-                  <tr>
-                    <td>记账到 BillTo</td>
-                    <td> {rcpt.custName}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label49}</td>
-                    <td>{this.state.customerDetails.nric}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label196}</td>
-                    <td> {rcpt.prescriptionDate}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label197}</td>
-                    <td> {rcpt.staffName}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label198}</td>
-                    <td> {rcpt.staffCode}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label199}</td>
-                    <td>{filteredPerson.daysToTakeMedicine}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label200}</td>
-                    <td>{filteredPerson.timeToTakeMedicine}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label201}</td>
-                    <td>{filteredPerson.waysToTakeMedicine}</td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label202}</td>
-                    <td>{filteredPerson.remark}</td>
-                  </tr>
-
-                  <tr>
-                    <td>{this.state.LabelData.label22}</td>
-                    <td>{consultationFee.toFixed(2)} </td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label25}</td>
-                    <td>{drugAmount.toFixed(2)} </td>
-                  </tr>
-                  <tr>
-                    <td>{this.state.LabelData.label205}</td>
-                    <td>{totalAmountPayable} </td>
-                  </tr>
-                </thead>
-              </table>
-              <footer></footer>
-            </center>
+        <NoPrint>
+          <div className="form-row">
+            <div className="col-md-1">
+              <div className="form-label-group">
+                <label htmlFor="inputName">Choose Page Size</label>
+              </div>
+            </div>
+            <div className="col-md-2">
+              <div className="form-label-group">
+                <select
+                  className="form-control"
+                  name="itemtype"
+                  onChange={(e) => this.setState({ pageSize: e.target.value })}
+                >
+                  <option value="">Please Select</option>
+                  <option value="A4">A4</option>
+                  <option value="A5">A5</option>
+                </select>
+              </div>
+            </div>
           </div>
-        ))}
+        </NoPrint>
+        <hr />
+        {this.state.pageSize === "A5" ? (
+          <A5
+            landscape
+            style={{
+              overflow: "hidden",
+              height: "100%",
+            }}
+          >
+            {printData}
+          </A5>
+        ) : (
+          <A4
+            landscape
+            style={{
+              overflow: "hidden",
+              height: "100%",
+            }}
+          >
+            {printData}
+          </A4>
+        )}
       </div>
     );
   }

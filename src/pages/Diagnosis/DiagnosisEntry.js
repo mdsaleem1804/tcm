@@ -212,10 +212,6 @@ export default class DiagnosisEntry extends Component {
           //alert("Diagnosis Created Successfully " + diagnoseNo);
           alert("Patient diagnosis is saved ");
           localStorage.setItem("diagnoseNo", diagnoseNo);
-          localStorage.setItem(
-            "rcptRegTime",
-            dateFormat(Helper.getCurrentDate(), "dd/mm/yyyy")
-          );
           this.DataClear();
           this.props.history.push({
             pathname: "/PrescriptionEntry",
@@ -257,7 +253,19 @@ export default class DiagnosisEntry extends Component {
         console.log(error);
       });
   }
-
+  DeleteDiagnosisHistory(xDiagnoseNo) {
+    axios
+      .put(Helper.getUrl() + "tcmDiagnose?DiagnoseNo=" + xDiagnoseNo)
+      .then((result) => {
+        if (result.data.success === "1") {
+          alert(result.data.result);
+          this.GetCustomerHistory();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   GetDiseaseData(xCategory, xItemName) {
     axios
       .post(Helper.getUrl() + "tcmDiseaseSearch", {
@@ -496,7 +504,11 @@ export default class DiagnosisEntry extends Component {
                           {dateFormat(customer.diagnoseDate, "dd/mm/yyyy")}
                         </td>
 
-                        <td>
+                        <td>{customer.diagnoseSummary}</td>
+                        <td>{customer.prescription}</td>
+                        <td>{customer.totalAmount}</td>
+
+                        <td width="80">
                           <img
                             style={{ paddingRight: "30px" }}
                             src={require("../../assets/down-arrow.png")}
@@ -507,11 +519,8 @@ export default class DiagnosisEntry extends Component {
                               customer.diagnoseNo
                             )}
                           />
-
-                          {customer.diagnoseSummary}
                         </td>
-                        <td>{customer.prescription}</td>
-                        <td>
+                        <td width="80">
                           <img
                             style={{ paddingRight: "30px" }}
                             src={require("../../assets/eye.png")}
@@ -522,7 +531,18 @@ export default class DiagnosisEntry extends Component {
                               customer.prescription
                             )}
                           />
-                          {customer.totalAmount}
+                        </td>
+                        <td width="80">
+                          <img
+                            style={{ paddingRight: "30px" }}
+                            src={require("../../assets/delete.png")}
+                            width="80"
+                            height="40"
+                            onClick={this.DeleteDiagnosisHistory.bind(
+                              this,
+                              customer.diagnoseNo
+                            )}
+                          />
                         </td>
                       </tr>
                     ))}

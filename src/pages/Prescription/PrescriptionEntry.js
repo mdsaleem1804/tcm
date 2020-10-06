@@ -477,6 +477,21 @@ export default class PrescriptionEntry extends Component {
         console.log(error);
       });
   }
+  DeleteprescriptionHistory(xPrescriptionNo) {
+    axios
+      .put(
+        Helper.getUrl() + "tcmPrescription?PrescriptionNo=" + xPrescriptionNo
+      )
+      .then((result) => {
+        if (result.data.success === "1") {
+          alert(result.data.result);
+          this.GetCustomerPrescriptionHistory();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   GoToReceipt(xPrescriptionNo) {
     localStorage.setItem("rcptPrescriptionNo", xPrescriptionNo);
     this.props.history.push({
@@ -672,6 +687,10 @@ export default class PrescriptionEntry extends Component {
                                   src={require("../../assets/delete.png")}
                                   width="80"
                                   height="40"
+                                  onClick={this.DeleteprescriptionHistory.bind(
+                                    this,
+                                    customer.prescriptionNo
+                                  )}
                                 />
                               </td>
                             </tr>
