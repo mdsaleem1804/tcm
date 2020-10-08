@@ -159,7 +159,11 @@ export default class MCPreview extends Component {
                   <br />
                   <label>
                     日期Date{" "}
-                    {"" + dateFormat(Helper.getCurrentDate(), "dd/mm/yyyy")}
+                    {"" +
+                      dateFormat(
+                        Helper.getCurrentDate(),
+                        "dd/mm/yyyy hh:mm:ss TT"
+                      )}
                   </label>
                 </div>
               </div>

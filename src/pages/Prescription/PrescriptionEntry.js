@@ -422,6 +422,9 @@ export default class PrescriptionEntry extends Component {
       })
       .then((result) => {
         if (result.data.success) {
+          if (xItemDesc === "") {
+            this.setState({ treeData: [] });
+          }
           this.setState({
             treeData: result.data.result,
           });
@@ -763,6 +766,8 @@ export default class PrescriptionEntry extends Component {
                         type="number"
                         className="form-control"
                         name="unitprice"
+                        onkeypress="return event.charCode >= 46"
+                        min="0"
                         value={this.state.unitprice}
                         onBlur={this.handleChangeForUnitTotal}
                         onChange={(e) =>
@@ -788,6 +793,7 @@ export default class PrescriptionEntry extends Component {
                         type="number"
                         className="form-control"
                         name="qty"
+                        min="1"
                         size="5"
                         value={this.state.qty}
                         onBlur={this.handleChangeForUnitTotal}
@@ -843,6 +849,7 @@ export default class PrescriptionEntry extends Component {
                           type="number"
                           className="form-control"
                           name="unittime"
+                          min="1"
                           size="5"
                           value={this.state.unittime}
                           onBlur={this.handleChangeForUnitTotal}

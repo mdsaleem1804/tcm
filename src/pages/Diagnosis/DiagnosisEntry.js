@@ -266,22 +266,50 @@ export default class DiagnosisEntry extends Component {
         console.log(error);
       });
   }
+
   GetDiseaseData(xCategory, xItemName) {
-    axios
-      .post(Helper.getUrl() + "tcmDiseaseSearch", {
-        category: xCategory,
-        ItemName: xItemName,
-      })
-      .then((result) => {
-        if (result.data.success) {
-          this.setState({ treeData: result.data.result });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    console.log("ItemName" + xItemName);
+    if (xItemName === "") {
+      this.setState({ treeData: [] });
+      axios
+        .post(Helper.getUrl() + "tcmDiseaseSearch", {
+          category: xCategory,
+          ItemName: xItemName,
+        })
+        .then((result) => {
+          if (result.data.success) {
+            this.setState({ treeData: result.data.result });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      axios
+        .post(Helper.getUrl() + "tcmDiseaseSearch", {
+          category: xCategory,
+          ItemName: xItemName,
+        })
+        .then((result) => {
+          if (result.data.success) {
+            this.setState({ treeData: [] });
+            const testData = [];
+            for (var i = 0; i < result.data.result.length; i++) {
+              testData.push({
+                id: i,
+                text: result.data.result[i].text,
+              });
+            }
+            this.setState({ treeData: testData });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
   GetChineseEnglishName(xType, xCategory, xItemName) {
+    this.setState({ treeData: [] });
     axios
       .post(Helper.getUrl() + "tcmChineseSearch", {
         Type: xType,
@@ -299,6 +327,7 @@ export default class DiagnosisEntry extends Component {
   }
 
   GetAllergicData(xAllergicType, xSearchKey) {
+    this.setState({ treeData: [] });
     axios
       .post(Helper.getUrl() + "tcmAllergicSearch", {
         Type: xAllergicType,
@@ -457,7 +486,7 @@ export default class DiagnosisEntry extends Component {
                 <thead>
                   <tr>
                     <td>{this.state.LabelData.label54}</td>
-                    <td>{this.state.diagnoseDate}</td>
+                    <td>{dateFormat(this.state.diagnoseDate, "dd/mm/yyyy")}</td>
                   </tr>
                   <tr>
                     <td>{this.state.LabelData.label48}</td>
@@ -500,9 +529,7 @@ export default class DiagnosisEntry extends Component {
                   <tbody>
                     {this.state.diagnosisHistory.map((customer, index) => (
                       <tr key={customer.Id}>
-                        <td>
-                          {dateFormat(customer.diagnoseDate, "dd/mm/yyyy")}
-                        </td>
+                        <td>{customer.diagnoseDate}</td>
 
                         <td>{customer.diagnoseSummary}</td>
                         <td>{customer.prescription}</td>
@@ -561,16 +588,35 @@ export default class DiagnosisEntry extends Component {
                 <Col sm={3}>
                   <Nav variant="pills" className="flex-column">
                     <Nav.Item>
-                      <Nav.Link eventKey="first">Main Action</Nav.Link>
+                      <Nav.Link eventKey="first">
+                        {Helper.changeLabelFormat(
+                          this.state.LabelData.label207
+                        )}
+                      </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="second">General checkup</Nav.Link>
+                      <Nav.Link eventKey="second">
+                        {" "}
+                        {Helper.changeLabelFormat(
+                          this.state.LabelData.label208
+                        )}
+                      </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="third">Treatment</Nav.Link>
+                      <Nav.Link eventKey="third">
+                        {" "}
+                        {Helper.changeLabelFormat(
+                          this.state.LabelData.label209
+                        )}
+                      </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="fourth">Slimmimng Treatment</Nav.Link>
+                      <Nav.Link eventKey="fourth">
+                        {" "}
+                        {Helper.changeLabelFormat(
+                          this.state.LabelData.label210
+                        )}
+                      </Nav.Link>
                     </Nav.Item>
                   </Nav>
                 </Col>
@@ -904,7 +950,11 @@ export default class DiagnosisEntry extends Component {
                       <div className="form-row">
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Arm Right</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label211
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -917,7 +967,11 @@ export default class DiagnosisEntry extends Component {
                         </div>
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Arm Left</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label212
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -932,7 +986,11 @@ export default class DiagnosisEntry extends Component {
                       <div className="form-row">
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Waist</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label213
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -943,11 +1001,13 @@ export default class DiagnosisEntry extends Component {
                             />
                           </div>
                         </div>
-                      </div>
-                      <div className="form-row">
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Hip</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label214
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -959,10 +1019,15 @@ export default class DiagnosisEntry extends Component {
                           </div>
                         </div>
                       </div>
+
                       <div className="form-row">
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Thigh Right</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label215
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -975,7 +1040,11 @@ export default class DiagnosisEntry extends Component {
                         </div>
                         <div className="col-md-3">
                           <div className="form-label-group">
-                            <label htmlFor="inputName">Thigh Left</label>
+                            <label htmlFor="inputName">
+                              {Helper.changeLabelFormat(
+                                this.state.LabelData.label216
+                              )}
+                            </label>
                             <input
                               type="text"
                               className="form-control"

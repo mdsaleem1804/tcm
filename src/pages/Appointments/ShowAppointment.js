@@ -49,7 +49,7 @@ export default class ShowAppointment extends React.Component {
         title: this.state.appointments[i].subject,
         color:
           this.state.appointments[i].apptStatus === "Booking"
-            ? "#B5E3FD"
+            ? "lightblue"
             : this.state.appointments[i].apptStatus === "Confirm"
             ? "#62E741"
             : "#8080FF",
@@ -61,28 +61,37 @@ export default class ShowAppointment extends React.Component {
       <div style={{ paddingBottom: "50px" }}>
         <Header />
         <h4>{localStorage.getItem("fullName")}</h4>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+        <div
+          style={{
+            width: "100%",
+            height: "800px",
+            overflow: "scroll",
           }}
-          //initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          allDaySlot={false}
-          initialView="timeGrid"
-          events={calendarEvents}
-          weekends={true}
-          weekText={false}
-          expandRows={true}
-          eventClick={this.handleEventClick}
-          slotMinTime={"09:00:00"}
-          slotMaxTime={"22:00:00"}
-        />
+        >
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            //initialView="dayGridMonth"
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            allDaySlot={false}
+            initialView="timeGrid"
+            events={calendarEvents}
+            weekends={true}
+            weekText={false}
+            expandRows={true}
+            eventClick={this.handleEventClick}
+            slotMinTime={"09:00:00"}
+            slotMaxTime={"22:00:00"}
+            eventTextColor="black"
+          />
+        </div>
         <Footer />
       </div>
     );

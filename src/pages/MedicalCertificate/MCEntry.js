@@ -7,13 +7,14 @@ import Helper from "../../Common/Helper";
 import dateFormat from "dateformat";
 import SignaturePad from "react-signature-canvas";
 import styles from "./mc.css";
+import DatePicker from "react-datepicker";
 export default class MCEntry extends Component {
   state = {
     medicalCertificateNo: "",
     medicalCertificateDate: "",
     noOfDays: "",
-    fromDate: "",
-    toDate: "",
+    fromDate: dateFormat(Helper.getCurrentDate(), "yyyy-mm-dd"),
+    toDate: dateFormat(Helper.getCurrentDate(), "yyyy-mm-dd"),
     reason: "",
     createdBy: "",
     custSign: null,
@@ -309,13 +310,21 @@ export default class MCEntry extends Component {
           <div className="col-md-4">
             <div>
               <div className="card mb-3">
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Search Customer name to proceed
+                </p>
                 <div className="card-header">
                   <div className="form-row">
                     <div className="col-md-7">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Search"
                         onChange={(e) =>
                           this.setState({
                             searchCustomerText: e.target.value,

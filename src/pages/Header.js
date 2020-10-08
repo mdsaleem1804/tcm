@@ -75,7 +75,7 @@ export default class Header extends Component {
 
           <Link to={"/PaymentEntry"} className="navbar-brand">
             <MDBBtn color="success btn-block">
-              <MDBIcon size="lg" icon="rupee-sign" className="mr-2" />
+              <MDBIcon size="lg" icon="dollar-sign" className="mr-2" />
               {Helper.changeLabelFormat(this.state.LabelData.label34)}
             </MDBBtn>
           </Link>

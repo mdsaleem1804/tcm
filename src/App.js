@@ -15,7 +15,6 @@ import Settings from "./Common/Settings";
 import MCPreview from "./pages/MedicalCertificate/MCPreview";
 import ReceiptPreview from "./pages/Receipt/ReceiptPreview";
 import TreeViewSearch from "./pages/Prescription/TreeViewSearch";
-import PrescriptionNew from "./pages/Prescription/PrescriptionNew";
 import PaymentEntry from "./pages/Payment/PaymentEntry";
 
 import "./App.css";
@@ -37,7 +36,7 @@ function App() {
           <Route path="/DiagnosisEntry" component={DiagnosisEntry} />
           <Route path="/PrescriptionEntry" component={PrescriptionEntry} />
           <Route path="/TreeViewSearch" component={TreeViewSearch} />
-          <Route path="/PrescriptionNew" component={PrescriptionNew} />
+
           <Route path="/PaymentEntry" component={PaymentEntry} />
           <Route path="/ReceiptPreview" component={ReceiptPreview} />
         </Switch>
