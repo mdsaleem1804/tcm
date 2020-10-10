@@ -317,7 +317,7 @@ export default class MCEntry extends Component {
                     fontWeight: "bold",
                   }}
                 >
-                  Search Customer name to proceed
+                  Search Customer Name to Proceed 请输入顾客名字
                 </p>
                 <div className="card-header">
                   <div className="form-row">
